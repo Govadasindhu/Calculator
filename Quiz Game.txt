@@ -1,0 +1,85 @@
+import tkinter as tk
+from tkinter import messagebox
+
+# Sample quiz questions and answers
+quiz_data = [
+    {
+        "question": "What is the capital of India?",
+        "options": ["Mumbai", "Delhi", "Kolkata", "Hyderabad"],
+        "answer": "Delhi"
+    },
+    {
+        "question": "Which language is used for web development?",
+        "options": ["Python", "HTML", "C++", "Java"],
+        "answer": "HTML"
+    },
+    {
+        "question": "Who is the CEO of Tesla?",
+        "options": ["Bill Gates", "Sundar Pichai", "Elon Musk", "Jeff Bezos"],
+        "answer": "Elon Musk"
+    },
+    {
+        "question": "Which planet is known as the Red Planet?",
+        "options": ["Earth", "Venus", "Mars", "Jupiter"],
+        "answer": "Mars"
+    }
+]
+
+# Initial setup
+current_question = 0
+score = 0
+
+# Function to load a question
+def load_question():
+    question_label.config(text=quiz_data[current_question]['question'])
+    for i in range(4):
+        option_buttons[i].config(text=quiz_data[current_question]['options'][i], bg="#f0f0f0")
+
+# Function to handle user's answer
+def check_answer(selected):
+    global score, current_question
+    selected_option = quiz_data[current_question]['options'][selected]
+    correct = quiz_data[current_question]['answer']
+
+    if selected_option == correct:
+        score += 1
+        option_buttons[selected].config(bg="lightgreen")
+    else:
+        option_buttons[selected].config(bg="salmon")
+
+    root.after(1000, next_question)
+
+# Move to the next question or end quiz
+def next_question():
+    global current_question
+    current_question += 1
+    if current_question >= len(quiz_data):
+        show_result()
+    else:
+        load_question()
+
+# Show final result
+def show_result():
+    messagebox.showinfo("Quiz Completed", f"Your Score: {score}/{len(quiz_data)}")
+    root.destroy()
+
+# GUI Setup
+root = tk.Tk()
+root.title("Quiz Game")
+root.geometry("500x400")
+root.config(bg="#ffffff")
+root.resizable(False, False)
+
+question_label = tk.Label(root, text="", font=("Arial", 16, "bold"), wraplength=450, bg="#ffffff")
+question_label.pack(pady=30)
+
+option_buttons = []
+for i in range(4):
+    btn = tk.Button(root, text="", font=("Arial", 14), width=30, bg="#f0f0f0", relief="raised",
+                    command=lambda i=i: check_answer(i))
+    btn.pack(pady=10)
+    option_buttons.append(btn)
+
+# Start quiz
+load_question()
+root.mainloop()
